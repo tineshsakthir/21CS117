@@ -7,7 +7,7 @@ import cors from 'cors';
 app.use(cors());
 
 
-app.use('/categories', productRouter ) ; 
+app.use('/', productRouter ) ; 
 
 
 // const getToken = async (req, res) => {

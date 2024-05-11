@@ -26,17 +26,23 @@ const getToken = async (req, res) => {
 
 
 
+const allProducts = [] ; 
 
-const getProduct = async (req, res) => {
+
+
+const getAllProduct = async (category ,req, res) => {
     try {
+        // const company = req.params.company ;
+        // const category = req.params.category ;
 
-        const company = req.params.company ;
-        const category = req.params.category ;
+        
+
+        const company = req.query.company ;
         const top = req.query.top ;
         const minPrice = req.query.minPrice ;
         const maxPrice = req.query.maxPrice ;
 
-        // const category = 
+      
         console.log("inside get") ; 
         const token = await getToken(); 
         const config = {
@@ -44,14 +50,61 @@ const getProduct = async (req, res) => {
                 Authorization: `Bearer ${token}`
             }
         }    
+
+
         const products = await axios.get(`http://20.244.56.144/test/companies/${company}/categories/${category}/products?top=${top}&minPrice=${minPrice}&maxPrice=${maxPrice}`, config) ; 
 
-        res.status(200).json(products.data);
+
+         products.data.forEach((product) => {
+            product.productId = allProducts.length + 1;
+            allProducts.push(product);
+        });
+        console.log(allProducts) ;
+
+        
+        const sortBy = req.query.sortBy ; 
+
+        if(sortBy){
+         if(sortBy === 'price'){
+            allProducts.sort((a,b) => a.price - b.price) ;
+        }
+        if(sortBy === 'rating'){
+            allProducts.sort((a,b) => b.rating - a.rating) ;
+        }
+        if(sortBy === 'name'){
+            allProducts.sort((a,b) => a.name.localeCompare(b.name)) ;
+        }
+
+        if(sortBy === 'discount'){
+            allProducts.sort((a,b) => b.discount - a.discount) ;
+        }
+
+    }
+
+
+        res.status(200).json(allProducts);
+
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+
+
+const getProductById = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = allProducts.find((product) => product.productId == productId) ;
+        // if (!product) {
+        //     return res.status(404).json({ message: allProducts});
+        // }
+        console.log(product)
+        res.status(200).json(product);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
 }
 
 export {
-    getProduct
+    getAllProduct , getProductById
 }
