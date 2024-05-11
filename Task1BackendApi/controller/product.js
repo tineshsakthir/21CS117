@@ -32,10 +32,7 @@ const allProducts = [] ;
 
 const getAllProduct = async (category ,req, res) => {
     try {
-        // const company = req.params.company ;
-        // const category = req.params.category ;
-
-        
+              
 
         const company = req.query.company ;
         const top = req.query.top ;
@@ -61,7 +58,7 @@ const getAllProduct = async (category ,req, res) => {
         });
         console.log(allProducts) ;
 
-        
+
         const sortBy = req.query.sortBy ; 
 
         if(sortBy){
